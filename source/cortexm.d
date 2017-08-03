@@ -32,24 +32,24 @@ void _reset()
  */
 
 @section(".rodata._EXCEPTIONS")
-typeof(&handler)[14] _EXCEPTIONS = [
-    &handler, // NMI
-    &handler, // Hard fault
-    &handler, // Memmanage fault
-    &handler, // Bus fault
-    &handler, // Usage fault
+typeof(&defaultExceptionHandler)[14] _EXCEPTIONS = [
+    &defaultExceptionHandler, // NMI
+    &defaultExceptionHandler, // Hard fault
+    &defaultExceptionHandler, // Memmanage fault
+    &defaultExceptionHandler, // Bus fault
+    &defaultExceptionHandler, // Usage fault
     null, // Reserved
     null, // Reserved
     null, // Reserved
     null, // Reserved
-    &handler, // SVCall
+    &defaultExceptionHandler, // SVCall
     null, // Reserved for Debug
     null, // Reserved
-    &handler, // PendSV
-    &handler]; // Systick
+    &defaultExceptionHandler, // PendSV
+    &defaultExceptionHandler]; // Systick
 
 
-void handler()
+void defaultExceptionHandler()
 {
     pragma(LDC_never_inline);
     bkpt();
