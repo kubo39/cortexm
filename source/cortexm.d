@@ -1,15 +1,19 @@
 module cortexm;
 
-import ldc.attributes;
-import ldc.llvmasm;
+version(LDC) {
+    import ldc.attributes;
+    import ldc.llvmasm;
+}
 
 version(ARM_Thumb):
 extern(C):
 @nogc:
 nothrow:
 
-pragma(LDC_no_moduleinfo);
-pragma(LDC_no_typeinfo);
+version(LDC) {
+    pragma(LDC_no_moduleinfo);
+    pragma(LDC_no_typeinfo);
+}
 
 /**
  *  Entorypont.
@@ -60,23 +64,55 @@ void defaultExceptionHandler()
 
 
 /**
+ *  Interrupt.
+ */
+
+version(LDC) {
+    void disableInterrupt()
+    {
+        pragma(LDC_allow_inline);
+        cpsid();
+    }
+
+    void enableInterrupt()
+    {
+        pragma(LDC_allow_inline);
+        cpsie();
+    }
+}
+
+/**
  * Instructions.
  */
 
-void bkpt()
-{
-    pragma(LDC_allow_inline);
-    __asm("bkpt", "");
-}
+version(LDC) {
+    void bkpt()
+    {
+        pragma(LDC_allow_inline);
+        __asm("bkpt", "");
+    }
 
-void nop()
-{
-    pragma(LDC_allow_inline);
-    __asm("nop", "");
-}
+    void nop()
+    {
+        pragma(LDC_allow_inline);
+        __asm("nop", "");
+    }
 
-void wfi()
-{
-    pragma(LDC_allow_inline);
-    __asm("wfi", "");
+    void wfi()
+    {
+        pragma(LDC_allow_inline);
+        __asm("wfi", "");
+    }
+
+    void cpsid()
+    {
+        pragma(LDC_allow_inline);
+        __asm("cpsid i", "");
+    }
+
+    void cpsie()
+    {
+        pragma(LDC_allow_inline);
+        __asm("cpsie i", "");
+    }
 }
