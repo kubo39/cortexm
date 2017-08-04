@@ -22,7 +22,10 @@ version(LDC) {
 // User must define `main()` function.
 extern void main();
 
-void _reset()
+static typeof(&reset_handler) _reset = &reset_handler;
+
+@section(".text.reset_handler")
+void reset_handler()
 {
     main();
     while (true) {
@@ -46,7 +49,7 @@ extern {
     void SystickExceptionHandler();
 }
 
-@section(".rodata._EXCEPTIONS")
+@section(".rodata.exceptions")
 typeof(&defaultExceptionHandler)[14] _EXCEPTIONS = [
     &NMIExceptionHandler, // NMI
     &HardFaultExceptionHandler, // Hard fault
