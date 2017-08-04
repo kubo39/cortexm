@@ -35,22 +35,33 @@ void _reset()
  *  Exceptions.
  */
 
+extern {
+    void NMIExceptionHandler();
+    void HardFaultExceptionHandler();
+    void MemmanageFaultExceptionHandler();
+    void BusFaultExceptionHandler();
+    void UsageFaultExceptionHandler();
+    void SVCallExceptionHandler();
+    void PendSVExceptionHandler();
+    void SystickExceptionHandler();
+}
+
 @section(".rodata._EXCEPTIONS")
 typeof(&defaultExceptionHandler)[14] _EXCEPTIONS = [
-    &defaultExceptionHandler, // NMI
-    &defaultExceptionHandler, // Hard fault
-    &defaultExceptionHandler, // Memmanage fault
-    &defaultExceptionHandler, // Bus fault
-    &defaultExceptionHandler, // Usage fault
+    &NMIExceptionHandler, // NMI
+    &HardFaultExceptionHandler, // Hard fault
+    &MemmanageFaultExceptionHandler, // Memmanage fault
+    &BusFaultExceptionHandler, // Bus fault
+    &UsageFaultExceptionHandler, // Usage fault
     null, // Reserved
     null, // Reserved
     null, // Reserved
     null, // Reserved
-    &defaultExceptionHandler, // SVCall
+    &SVCallExceptionHandler, // SVCall
     null, // Reserved for Debug
     null, // Reserved
-    &defaultExceptionHandler, // PendSV
-    &defaultExceptionHandler]; // Systick
+    &PendSVExceptionHandler, // PendSV
+    &SystickExceptionHandler]; // Systick
 
 
 void defaultExceptionHandler()
