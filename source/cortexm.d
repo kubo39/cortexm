@@ -27,6 +27,7 @@ static typeof(&reset_handler) _reset = &reset_handler;
 @section(".text.reset_handler")
 void reset_handler()
 {
+    pragma(LDC_never_inline);
     main();
     while (true) {
         wfi();
