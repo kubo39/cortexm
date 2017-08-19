@@ -35,9 +35,27 @@ void reset_handler()
 }
 
 /**
- *  Registers.
+ *  Peripherals.
  */
 
+// Instrumentation Trace Macrocell
+__gshared Itm* ITM = cast(Itm*) 0xE0000000;
+
+struct Itm
+{
+    uint[256] stim;
+    uint[640] __reserved0;
+    uint[8] ter;
+    uint [8] __reserved1;
+    uint tpr;
+    uint[15] __reserved2;
+    uint tcr;
+    uint[75] __reserved3;
+    uint lar;
+    uint lsr;
+}
+
+// Nested Vector Interrupt Controller
 __gshared Nvic* NVIC = cast(Nvic*) 0xE000E100;
 
 struct Nvic
