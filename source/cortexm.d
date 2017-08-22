@@ -43,7 +43,7 @@ __gshared Itm* ITM = cast(Itm*) 0xE0000000;
 
 struct Itm
 {
-    uint[256] stim;
+    Stim[256] stim;
     uint[640] __reserved0;
     uint[8] ter;
     uint [8] __reserved1;
@@ -53,6 +53,16 @@ struct Itm
     uint[75] __reserved3;
     uint lar;
     uint lsr;
+}
+
+align (4) struct Stim
+{
+    uint register;
+}
+
+bool isFIFOReady(Stim* stim) pure
+{
+    return stim.register == 1;
 }
 
 // Nested Vector Interrupt Controller
