@@ -10,7 +10,8 @@ extern(C):
 @nogc:
 nothrow:
 
-version(LDC) {
+version(LDC)
+{
     pragma(LDC_no_moduleinfo);
     pragma(LDC_no_typeinfo);
 }
@@ -20,12 +21,12 @@ version(LDC) {
  */
 
 // User must define `main()` function.
-extern void main();
+extern (C) void main();
 
 static typeof(&reset_handler) _reset = &reset_handler;
 
 @section(".text.reset_handler")
-void reset_handler()
+extern (C) void reset_handler()
 {
     pragma(LDC_never_inline);
     main();
@@ -97,7 +98,7 @@ void enable(Nvic* _, uint nr)
  *  Exceptions.
  */
 
-extern {
+extern (C) {
     void NMIExceptionHandler();
     void HardFaultExceptionHandler();
     void MemmanageFaultExceptionHandler();
@@ -126,7 +127,7 @@ typeof(&defaultExceptionHandler)[14] _EXCEPTIONS = [
     &SystickExceptionHandler]; // Systick
 
 
-void defaultExceptionHandler()
+extern (C) void defaultExceptionHandler()
 {
     pragma(LDC_never_inline);
     bkpt();
@@ -140,7 +141,7 @@ void defaultExceptionHandler()
  *  Interrupts.
  */
 
-extern {
+extern (C) {
     void WWDG_IRQInterruptHandler();  // Window WatchDog
     void PVD_IRQInterruptHandler();   // PVD through EXTI Line detection
     void TAMP_STAMP_IRQInterruptHandler();    // Tamper and TimeStamps through the EXTI line
@@ -311,7 +312,7 @@ typeof(&defaultInterruptHandler)[82] INTERRUPTS = [
     &FPU_IRQInterruptHandler];
 
 
-void defaultInterruptHandler()
+extern (C) void defaultInterruptHandler()
 {
     pragma(LDC_never_inline);
     bkpt();
