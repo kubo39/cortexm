@@ -1,12 +1,12 @@
 module cortexm;
 
-version(LDC) {
+version(LDC)
+{
     import ldc.attributes;
     import ldc.llvmasm;
 }
 
 version(ARM_Thumb):
-extern(C):
 @nogc:
 nothrow:
 
@@ -22,8 +22,7 @@ version(LDC)
 
 // User must define `main()` function.
 extern (C) void main();
-
-static typeof(&reset_handler) _reset = &reset_handler;
+extern (C) static typeof(&reset_handler) _reset = &reset_handler;
 
 @section(".text.reset_handler")
 extern (C) void reset_handler()
@@ -321,7 +320,8 @@ extern (C) void defaultInterruptHandler()
     }
 }
 
-version(LDC) {
+version(LDC)
+{
     void disableInterrupt()
     {
         pragma(LDC_allow_inline);
@@ -339,7 +339,8 @@ version(LDC) {
  * Instructions.
  */
 
-version(LDC) {
+version(LDC)
+{
     void bkpt()
     {
         pragma(LDC_allow_inline);
@@ -369,4 +370,30 @@ version(LDC) {
         pragma(LDC_allow_inline);
         __asm("cpsie i", "");
     }
+}
+
+
+/**
+ *  bitop
+ */
+
+version (LDC)
+{
+    pragma(LDC_intrinsic, "ldc.bitop.vld")
+        ubyte volatileLoad(ubyte * ptr);
+    pragma(LDC_intrinsic, "ldc.bitop.vld")
+        ushort volatileLoad(ushort* ptr);
+    pragma(LDC_intrinsic, "ldc.bitop.vld")
+        uint volatileLoad(uint* ptr);
+    pragma(LDC_intrinsic, "ldc.bitop.vld")
+        ulong volatileLoad(ulong * ptr);
+
+    pragma(LDC_intrinsic, "ldc.bitop.vst")
+        void volatileStore(ubyte * ptr, ubyte value);
+    pragma(LDC_intrinsic, "ldc.bitop.vst")
+        void volatileStore(ushort* ptr, ushort value);
+    pragma(LDC_intrinsic, "ldc.bitop.vst")
+        void volatileStore(uint  * ptr, uint value);
+    pragma(LDC_intrinsic, "ldc.bitop.vst")
+        void volatileStore(ulong * ptr, ulong value);
 }
