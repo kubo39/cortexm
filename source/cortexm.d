@@ -60,9 +60,9 @@ align (4) struct Stim
     uint register;
 }
 
-bool isFIFOReady(Stim* stim) pure
+bool isFIFOReady(Stim* stim)
 {
-    return stim.register == 1;
+    return volatileLoad(&stim.register) == 1;
 }
 
 // Nested Vector Interrupt Controller
