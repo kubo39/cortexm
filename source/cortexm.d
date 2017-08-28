@@ -89,7 +89,7 @@ struct Nvic
 void enable(Nvic* _, uint nr)
 {
     auto iser = &NVIC.iser[nr / 32];
-    *iser = 1 << nr;
+    volatileStore(iser, 1 << nr);
 }
 
 
