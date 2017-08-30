@@ -20,16 +20,37 @@ version(LDC)
  *  Entorypont.
  */
 
-// User must define `main()` function.
-extern (C) void main();
-extern (C) static typeof(&reset_handler) _reset = &reset_handler;
+extern (C) {
+    __gshared typeof(&reset_handler) _reset = &reset_handler;
+
+    // User must define `main()` function.
+    void main();
+
+    // Start address of .bss section.
+    __gshared uint _ebss;
+    __gshared uint _sbss;
+}
+
+void initBSS(uint* sbss, uint* ebss)
+{
+    while (sbss < ebss) {
+        volatileStore(sbss, 0x0);
+        sbss++;
+    }
+}
 
 @section(".text.reset_handler")
 extern (C) void reset_handler()
 {
     pragma(LDC_never_inline);
+
+    // Initialize .bss section.
+    initBSS(&_sbss, &_ebss);
+
+    // Start user code.
     main();
-    while (true) {
+    while (true)
+    {
         wfi();
     }
 }
