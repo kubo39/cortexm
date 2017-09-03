@@ -26,9 +26,25 @@ extern (C) {
     // User must define `main()` function.
     void main();
 
-    // Start address of .bss section.
+    // Start/End address of .bss section.
     __gshared uint _ebss;
     __gshared uint _sbss;
+
+    // Start/End address of .data section.
+    __gshared uint _edata;
+    __gshared uint _sdata;
+
+    // Initial values of .data section
+    __gshared uint _sidata;
+}
+
+void initDATA(uint* sdata, uint* edata, uint* sidata)
+{
+    while (sdata < edata) {
+        volatileStore(sdata, volatileLoad(sidata));
+        sdata++;
+        sidata++;
+    }
 }
 
 void initBSS(uint* sbss, uint* ebss)
@@ -44,8 +60,9 @@ extern (C) void reset_handler()
 {
     pragma(LDC_never_inline);
 
-    // Initialize .bss section.
+    // Initialize  .bss and .data sections.
     initBSS(&_sbss, &_ebss);
+    initDATA(&_sdata, &_edata, &_sidata);
 
     // Start user code.
     main();
