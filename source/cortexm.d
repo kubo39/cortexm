@@ -21,7 +21,7 @@ version(LDC)
  */
 
 extern (C) {
-    __gshared typeof(&reset_handler) _reset = &reset_handler;
+    __gshared @section(".isr_vector._reset") typeof(&reset_handler) _reset = &reset_handler;
 
     // User must define `main()` function.
     void main();
@@ -55,7 +55,6 @@ void initBSS(uint* sbss, uint* ebss)
     }
 }
 
-@section(".text.reset_handler")
 extern (C) void reset_handler()
 {
     pragma(LDC_never_inline);
@@ -146,7 +145,7 @@ extern (C) {
     void SystickExceptionHandler();
 }
 
-@section(".rodata.exceptions")
+@section(".isr_vector.exceptions")
 typeof(&defaultExceptionHandler)[14] _EXCEPTIONS = [
     &NMIExceptionHandler, // NMI
     &HardFaultExceptionHandler, // Hard fault
@@ -263,7 +262,7 @@ extern (C) {
     void FPU_IRQInterruptHandler();    // FPU
 }
 
-@section(".rodata.interrupts")
+@section(".isr_vector.interrupts")
 typeof(&defaultInterruptHandler)[82] INTERRUPTS = [
     &WWDG_IRQInterruptHandler,
     &PVD_IRQInterruptHandler,
