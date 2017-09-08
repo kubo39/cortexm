@@ -146,7 +146,7 @@ extern (C) {
 }
 
 @section(".isr_vector.exceptions")
-typeof(&defaultExceptionHandler)[14] _EXCEPTIONS = [
+__gshared typeof(&defaultExceptionHandler)[14] _EXCEPTIONS = [
     &NMIExceptionHandler, // NMI
     &HardFaultExceptionHandler, // Hard fault
     &MemmanageFaultExceptionHandler, // Memmanage fault
@@ -263,7 +263,7 @@ extern (C) {
 }
 
 @section(".isr_vector.interrupts")
-typeof(&defaultInterruptHandler)[82] INTERRUPTS = [
+__gshared typeof(&defaultInterruptHandler)[82] INTERRUPTS = [
     &WWDG_IRQInterruptHandler,
     &PVD_IRQInterruptHandler,
     &TAMP_STAMP_IRQInterruptHandler,
