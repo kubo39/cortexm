@@ -31,11 +31,11 @@ extern (C) {
     __gshared uint _sbss;
 
     // Start/End address of .data section.
-    __gshared uint _edata;
-    __gshared uint _sdata;
+    __gshared uint* _edata;
+    __gshared uint* _sdata;
 
     // Initial values of .data section
-    __gshared uint _sidata;
+    __gshared uint* _sidata;
 }
 
 void initDATA(uint* sdata, uint* edata, uint* sidata)
@@ -61,7 +61,7 @@ extern (C) void reset_handler()
 
     // Initialize  .bss and .data sections.
     initBSS(&_sbss, &_ebss);
-    initDATA(&_sdata, &_edata, &_sidata);
+    initDATA(_sdata, _edata, _sidata);
 
     // Start user code.
     main();
