@@ -75,6 +75,39 @@ extern (C) void reset_handler()
  *  Peripherals.
  */
 
+// Data Watchpoint and Trace
+__gshared Dwt* DWT = cast(Dwt*) 0xE0001000;
+
+struct Dwt
+{
+    uint ctrl;
+    uint cyccnt;
+    uint cpicnt;
+    uint exccnt;
+    uint sleepcnt;
+    uint lsucnt;
+    uint foldcnt;
+    uint pcsr;
+    Comparator[16] c;
+    uint[932] __reserved;
+    uint lar;
+    uint lsr;
+}
+
+void enableCycleCounter(Dwt* dwt)
+{
+    volatileStore(&dwt.ctrl, volatileLoad(&dwt.ctrl) | 1);
+}
+
+
+struct Comparator
+{
+    uint comp;
+    uint mask;
+    uint _function;
+    uint __reserved;
+}
+
 // Instrumentation Trace Macrocell
 __gshared Itm* ITM = cast(Itm*) 0xE0000000;
 
