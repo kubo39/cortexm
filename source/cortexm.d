@@ -1,3 +1,6 @@
+/**
+Low-level access and runtime for ARM Cortex-M processors.
+ */
 module cortexm;
 
 version(LDC)
@@ -125,7 +128,7 @@ struct Itm
     uint lsr;
 }
 
-align (4) struct Stim
+struct Stim
 {
     uint register;
 }
@@ -135,7 +138,7 @@ bool isFIFOReady(Stim* stim)
     return volatileLoad(&stim.register) == 1;
 }
 
-// Nested Vector Interrupt Controller
+// Nested Vector Interrupt Controller.
 __gshared Nvic* NVIC = cast(Nvic*) 0xE000E100;
 
 struct Nvic
@@ -444,9 +447,8 @@ version(LDC)
 
 
 /**
- *  bitop
+ *  bitop.
  */
-
 version (LDC)
 {
     pragma(LDC_intrinsic, "ldc.bitop.vld")
