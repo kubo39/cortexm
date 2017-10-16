@@ -20,9 +20,8 @@ version(LDC)
 }
 
 /**
- *  Entorypont.
+Entorypont.
  */
-
 extern (C) {
     __gshared @section(".isr_vector._reset") typeof(&reset_handler) _reset = &reset_handler;
 
@@ -34,14 +33,15 @@ extern (C) {
     __gshared uint _sbss;
 
     // Start/End address of .data section.
-    __gshared uint* _edata;
-    __gshared uint* _sdata;
+    __gshared uint _edata;
+    __gshared uint _sdata;
 
     // Initial values of .data section
-    __gshared uint* _sidata;
+    __gshared uint _sidata;
 }
 
-void initDATA(uint* sdata, uint* edata, uint* sidata)
+
+void initDATA(uint* sdata, const uint* edata, uint* sidata)
 {
     while (sdata < edata) {
         volatileStore(sdata, volatileLoad(sidata));
@@ -50,7 +50,8 @@ void initDATA(uint* sdata, uint* edata, uint* sidata)
     }
 }
 
-void initBSS(uint* sbss, uint* ebss)
+
+void initBSS(uint* sbss, const uint* ebss)
 {
     while (sbss < ebss) {
         volatileStore(sbss, 0x0);
@@ -64,21 +65,20 @@ extern (C) void reset_handler()
 
     // Initialize  .bss and .data sections.
     initBSS(&_sbss, &_ebss);
-    initDATA(_sdata, _edata, _sidata);
+    initDATA(&_sdata, &_edata, &_sidata);
 
     // Start user code.
     main();
+
     while (true)
-    {
         wfi();
-    }
 }
 
 /**
- *  Peripherals.
+Peripherals.
  */
 
-// Data Watchpoint and Trace
+// Data Watchpoint and Trace.
 __gshared Dwt* DWT = cast(Dwt*) 0xE0001000;
 
 struct Dwt
@@ -97,6 +97,7 @@ struct Dwt
     uint lsr;
 }
 
+
 void enableCycleCounter(Dwt* dwt)
 {
     volatileStore(&dwt.ctrl, volatileLoad(&dwt.ctrl) | 1);
@@ -111,8 +112,10 @@ struct Comparator
     uint __reserved;
 }
 
-// Instrumentation Trace Macrocell
+
+// Instrumentation Trace Macrocell.
 __gshared Itm* ITM = cast(Itm*) 0xE0000000;
+
 
 struct Itm
 {
@@ -128,6 +131,7 @@ struct Itm
     uint lsr;
 }
 
+
 struct Stim
 {
     uint register;
@@ -138,8 +142,10 @@ bool isFIFOReady(Stim* stim)
     return volatileLoad(&stim.register) == 1;
 }
 
+
 // Nested Vector Interrupt Controller.
 __gshared Nvic* NVIC = cast(Nvic*) 0xE000E100;
+
 
 struct Nvic
 {
@@ -158,6 +164,7 @@ struct Nvic
     uint stir;
 }
 
+
 // Enable interrupt.
 void enable(Nvic* _, uint nr)
 {
@@ -167,9 +174,8 @@ void enable(Nvic* _, uint nr)
 
 
 /**
- *  Exceptions.
+Exceptions.
  */
-
 extern (C) {
     void NMIExceptionHandler();
     void HardFaultExceptionHandler();
@@ -180,6 +186,7 @@ extern (C) {
     void PendSVExceptionHandler();
     void SystickExceptionHandler();
 }
+
 
 @section(".isr_vector.exceptions")
 __gshared typeof(&defaultExceptionHandler)[14] _EXCEPTIONS = [
@@ -210,9 +217,8 @@ extern (C) void defaultExceptionHandler()
 
 
 /**
- *  Interrupts.
+Interrupts.
  */
-
 extern (C) {
     void WWDG_IRQInterruptHandler();  // Window WatchDog
     void PVD_IRQInterruptHandler();   // PVD through EXTI Line detection
@@ -297,6 +303,7 @@ extern (C) {
     void HASH_RNG_IRQInterruptHandler();      // Hash and Rng
     void FPU_IRQInterruptHandler();    // FPU
 }
+
 
 @section(".isr_vector.interrupts")
 __gshared typeof(&defaultInterruptHandler)[82] INTERRUPTS = [
@@ -388,9 +395,8 @@ extern (C) void defaultInterruptHandler()
 {
     pragma(LDC_never_inline);
     bkpt();
-    while (true) {
+    while (true)
         wfi();
-    }
 }
 
 version(LDC)
@@ -408,10 +414,10 @@ version(LDC)
     }
 }
 
-/**
- * Instructions.
- */
 
+/**
+Instructions.
+ */
 version(LDC)
 {
     void bkpt()
@@ -447,7 +453,7 @@ version(LDC)
 
 
 /**
- *  bitop.
+volatileLoad/volatileStore intrinsic.
  */
 version (LDC)
 {
