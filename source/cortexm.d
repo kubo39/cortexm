@@ -416,6 +416,18 @@ version(LDC)
         cpsie();
     }
 }
+else version (GNU)
+{
+    @naked void disableInterrupt()
+    {
+        cpsid();
+    }
+
+    @naked void enableInterrupt()
+    {
+        cpsie();
+    }
+}
 
 
 /**
@@ -451,6 +463,33 @@ version(LDC)
     {
         pragma(LDC_allow_inline);
         __asm("cpsie i", "");
+    }
+}
+else version (GNU)
+{
+    @naked void bkpt()
+    {
+        asm { "bkpt"; };
+    }
+
+    @naked void nop()
+    {
+        asm { "nop"; };
+    }
+
+    @naked void wfi()
+    {
+        asm { "wfi"; };
+    }
+
+    @naked void cpsid()
+    {
+        asm { "cpsid i"; };
+    }
+
+    @naked void cpsie()
+    {
+        asm { "cpsie i"; };
     }
 }
 
