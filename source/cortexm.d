@@ -3,20 +3,23 @@ Low-level access and runtime for ARM Cortex-M processors.
  */
 module cortexm;
 
-version(LDC)
-{
-    import ldc.attributes;
-    import ldc.llvmasm;
-}
-
 version(ARM_Thumb):
 @nogc:
 nothrow:
 
 version(LDC)
 {
+    import ldc.attributes;
+    import ldc.llvmasm;
+
     pragma(LDC_no_moduleinfo);
     pragma(LDC_no_typeinfo);
+}
+else version(GNU)
+{
+    import gcc.attribute;
+
+    enum section = gcc.attribute.attribute("section");
 }
 
 /**
@@ -413,6 +416,18 @@ version(LDC)
         cpsie();
     }
 }
+else version (GNU)
+{
+    @naked void disableInterrupt()
+    {
+        cpsid();
+    }
+
+    @naked void enableInterrupt()
+    {
+        cpsie();
+    }
+}
 
 
 /**
@@ -450,6 +465,33 @@ version(LDC)
         __asm("cpsie i", "");
     }
 }
+else version (GNU)
+{
+    @naked void bkpt()
+    {
+        asm { "bkpt"; };
+    }
+
+    @naked void nop()
+    {
+        asm { "nop"; };
+    }
+
+    @naked void wfi()
+    {
+        asm { "wfi"; };
+    }
+
+    @naked void cpsid()
+    {
+        asm { "cpsid i"; };
+    }
+
+    @naked void cpsie()
+    {
+        asm { "cpsie i"; };
+    }
+}
 
 
 /**
@@ -474,4 +516,16 @@ version (LDC)
         void volatileStore(uint  * ptr, uint value);
     pragma(LDC_intrinsic, "ldc.bitop.vst")
         void volatileStore(ulong * ptr, ulong value);
+}
+else version(GNU)
+{
+    ubyte volatileLoad(ubyte * ptr);
+    ushort volatileLoad(ushort* ptr);
+    uint volatileLoad(uint* ptr);
+    ulong volatileLoad(ulong * ptr);
+
+    void volatileStore(ubyte * ptr, ubyte value);
+    void volatileStore(ushort* ptr, ushort value);
+    void volatileStore(uint  * ptr, uint value);
+    void volatileStore(ulong * ptr, ulong value);
 }
