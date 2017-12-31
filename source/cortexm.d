@@ -61,7 +61,7 @@ void initBSS(uint* sbss, const uint* ebss)
 
 extern (C) void reset_handler()
 {
-    pragma(LDC_never_inline);
+    version(LDC) pragma(LDC_never_inline);
 
     // Initialize  .bss and .data sections.
     initBSS(&_sbss, &_ebss);
@@ -208,7 +208,7 @@ __gshared typeof(&defaultExceptionHandler)[14] _EXCEPTIONS = [
 
 extern (C) void defaultExceptionHandler()
 {
-    pragma(LDC_never_inline);
+    version(LDC) pragma(LDC_never_inline);
     bkpt();
     while (true) {
         wfi();
@@ -393,7 +393,7 @@ __gshared typeof(&defaultInterruptHandler)[82] INTERRUPTS = [
 
 extern (C) void defaultInterruptHandler()
 {
-    pragma(LDC_never_inline);
+    version(LDC) pragma(LDC_never_inline);
     bkpt();
     while (true)
         wfi();
