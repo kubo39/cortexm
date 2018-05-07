@@ -414,6 +414,23 @@ version(LDC)
     }
 }
 
+/**
+Runtime functions.
+ */
+
+extern (C) int memcmp(const(ubyte)* s1, const(ubyte)* s2, uint n)
+{
+    int i = 0;
+    while (i < n)
+    {
+        auto a = s1++;
+        auto b = s2++;
+        if (*a != *b)
+            return *a - *b;
+        i++;
+    }
+    return 0;
+}
 
 /**
 Instructions.
